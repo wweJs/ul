@@ -29,8 +29,9 @@ async function getIPInfo(ip) {
 
 async function getAdditionalIPInfo(ip) {
     try {
-        const response = await fetch(`http://ip-api.com/json/${ip}`);
-        const data = await response.json();
+        const xhr = new XMLHttpRequest();
+        await xhr.open('GET', `http://ip-api.com/json/${ip}`);
+        const data = await JSON.parse(xhr.responseText);
         return data;
     } catch (error) {
         console.error('Ошибка получения дополнительной информации об IP адресе:', error);
